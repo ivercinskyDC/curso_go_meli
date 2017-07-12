@@ -18,7 +18,12 @@ func main() {
 	meliAPI := meli.API("MLA")
 	r.GET("/categories/:category/prices", func(c *gin.Context) {
 		category := c.Param("category")
-		c.JSON(http.StatusOK, meliAPI.Prices(category))
+		resp, err := meliAPI.Prices(category)
+		if err == nil {
+			c.JSON(http.StatusOK, resp)
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
 	})
 	r.GET("/search", func(c *gin.Context) {
 		searchParams := &meli.SearchParams{}
