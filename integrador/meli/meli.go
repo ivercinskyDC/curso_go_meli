@@ -39,13 +39,13 @@ func (m *Meli) Category(CatID string) (*Category, error) {
 }
 
 //Search is a wrapper for the http call to
-func (m *Meli) Search(params *SearchParams) *SearchResult {
+func (m *Meli) Search(params *SearchParams) (*SearchResult, error) {
 	url := "https://api.mercadolibre.com/sites/" + m.SiteID + "/search?"
 	if params.MethodID == "" {
-		panic("MethoID is required")
+		return nil, errors.New("MethoID is required")
 	}
 	if params.SearchID == "" {
-		panic("SearchID is required")
+		return nil, errors.New("SearchID is required")
 	}
 	url += params.MethodID
 	url += "=" + params.SearchID
@@ -64,20 +64,19 @@ func (m *Meli) Search(params *SearchParams) *SearchResult {
 	fmt.Fprintf(os.Stdout, "Calling %s\n", url)
 	resp, err := http.Get(url)
 	if err != nil {
-		panic(err)
-	} else {
-		searchResponse := &SearchResult{}
-		rawBody, readError := ioutil.ReadAll(resp.Body)
-		if readError != nil {
-			panic(readError)
-		} else {
-			unmarshalError := json.Unmarshal(rawBody, searchResponse)
-			if unmarshalError != nil {
-				panic(unmarshalError)
-			}
-			return searchResponse
-		}
+		return nil, err
 	}
+	searchResponse := &SearchResult{}
+	rawBody, readError := ioutil.ReadAll(resp.Body)
+	if readError != nil {
+		return nil, readError
+	}
+	unmarshalError := json.Unmarshal(rawBody, searchResponse)
+	if unmarshalError != nil {
+		return nil, unmarshalError
+	}
+	return searchResponse, nil
+
 }
 
 func (m *Meli) getSuggestions(items []SearchItem) (*Suggestion, error) {
@@ -124,7 +123,10 @@ func (m *Meli) Prices(CatID string) (*Suggestion, error) {
 	searchParams.FilterID = ""
 	searchParams.Limit = "200"
 	searchParams.Offset = ""
-	response := m.Search(searchParams)
+	response, err := m.Search(searchParams)
+	if err != nil {
+		return nil, err
+	}
 	//meli limita el limite a 200. Hay que recuperar en varios llamados
 	return m.getSuggestions(response.SearchItems)
 }
