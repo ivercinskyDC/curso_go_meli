@@ -113,7 +113,7 @@ func (m *Meli) Prices(CatID string) (*Suggestion, error) {
 	if err != nil {
 		return nil, err
 	}
-	if len(cat.ChildrenCategories) == 0 {
+	if len(cat.ChildrenCategories) > 0 {
 		return nil, errors.New("Its not a Valid ID")
 	}
 	//hacer un multiget para recuperar todos los items de la categoria. haciendo ItemsEnCategoria / 200
