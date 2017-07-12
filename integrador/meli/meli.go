@@ -114,7 +114,7 @@ func (m *Meli) Prices(CatID string) (*Suggestion, error) {
 		return nil, err
 	}
 	if len(cat.ChildrenCategories) > 0 {
-		return nil, errors.New("Its not a Valid ID")
+		return nil, errors.New("La categoria no puede tener subcategorias")
 	}
 	//hacer un multiget para recuperar todos los items de la categoria. haciendo ItemsEnCategoria / 200
 	searchParams := &SearchParams{}

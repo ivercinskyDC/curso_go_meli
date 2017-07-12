@@ -12,9 +12,7 @@ import (
 func main() {
 	fmt.Fprintf(os.Stdout, "API para Sugerir Precio de Item\n")
 	r := gin.Default()
-	r.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "Hello")
-	})
+	r.StaticFile("/", "./frontend/index.html")
 	meliAPI := meli.API("MLA")
 	r.GET("/categories/:category/prices", func(c *gin.Context) {
 		category := c.Param("category")
@@ -24,17 +22,6 @@ func main() {
 		} else {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
-	})
-	r.GET("/search", func(c *gin.Context) {
-		searchParams := &meli.SearchParams{}
-		searchParams.MethodID = "category"
-		searchParams.SearchID = c.Query("id")
-		searchParams.SortID = "relevance"
-		searchParams.FilterID = ""
-		searchParams.Limit = "100"
-		searchParams.Offset = ""
-		search := meliAPI.Search(searchParams)
-		c.JSON(http.StatusOK, search.SearchItems[0])
 	})
 	r.Run(":8080")
 }

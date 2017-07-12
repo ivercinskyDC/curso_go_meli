@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Meli Prices - Integrador - </title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a href="#" class="navbar-brand">Mercado Libre - Precio Sugerido</a>
+            </div>
+        </div>
+        <div id="navbar"></div>
+    </div>
+    <div class="container">
+
+
+        <ul id="errors" class="list-group">
+        </ul>
+        <h3>Ingrese el ID de una categoria</h3>
+        <p>Esta API le permite obtener el precio sugerido de venta para el id ingresada</p>
+        <div class="form-group">
+            <input type="text" name="catID" class="form-control" id="catID" placeholder="ID de Categoria">
+
+        </div>
+        <button type="button" id="buscar" data-loading-text="Buscando..." class="btn btn-primary" autocomplete="off">Buscar</button>
+        <hr>
+        <div class="container">
+            <h3>
+
+                <ul id="suggestion" class="list-group"></ul>
+            </h3>
+        </div>
+    </div>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/df-number-format/2.1.6/jquery.number.min.js"></script>
+    <script>
+        $("#buscar").on("click", function (e) {
+            var button = $(this).button('loading')
+            var url = "/categories/" + $("#catID").val() + "/prices"
+            $("#errors").html("")
+            $.get({
+                url: url
+            }).then(function (data) {
+                var pmax = $("<li></li>");
+                pmax.addClass("list-group-item list-group-item-warning")
+                pmax.append("Precio Máximo : $ " + $.number(data.max, 2));
+                var psug = $("<li></li>");
+                psug.addClass("list-group-item list-group-item-success")
+                psug.append("Precio Sugerido: $ " + $.number(data.suggested, 2));
+                var pmin = $("<li></li>");
+                pmin.addClass("list-group-item list-group-item-info")
+                pmin.append("Precio Minimo : $ " + $.number(data.min, 2));
+                $("#suggestion").append(pmax);
+                $("#suggestion").append(psug);
+                $("#suggestion").append(pmin);
+                button.button('reset')
+            }, function (err) {
+                var error = $("<li></li>");
+                error.addClass("list-group-item list-group-item-danger")
+                error.append(JSON.parse(err.responseText).error)
+                $("#errors").append(error)
+                button.button('reset')
+            })
+        })
+    </script>
+</body>
+
+</html>
