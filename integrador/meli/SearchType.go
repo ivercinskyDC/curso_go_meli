@@ -44,6 +44,7 @@ type SearchItem struct {
 	Condition          string       `json:"condition"`
 	AcceptsMercadoPago bool         `json:"accepts_mercadopago"`
 	Shipping           ItemShipping `json:"shipping"`
+	CategoryID         string       `json:"category_id"`
 }
 
 //ItemSeller is struct of the seller info

@@ -61,7 +61,6 @@ func (m *Meli) Search(params *SearchParams) (*SearchResult, error) {
 	if params.Offset != "" {
 		url += "&offset=" + params.Offset
 	}
-	fmt.Fprintf(os.Stdout, "Calling %s\n", url)
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
