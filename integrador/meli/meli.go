@@ -78,7 +78,7 @@ func (m *Meli) Search(params *SearchParams) (*SearchResult, error) {
 
 }
 
-func (m *Meli) getSuggestions(items []SearchItem) (*Suggestion, error) {
+func (m *Meli) getSuggestion(items []SearchItem) (*Suggestion, error) {
 	if len(items) == 0 {
 		return &Suggestion{0, 0, 0}, nil
 	}
@@ -127,7 +127,7 @@ func (m *Meli) Prices(CatID string) (*Suggestion, error) {
 		return nil, err
 	}
 	//meli limita el limite a 200. Hay que recuperar en varios llamados
-	return m.getSuggestions(response.SearchItems)
+	return m.getSuggestion(response.SearchItems)
 }
 
 //API get the API Wrapper for a specific SITE

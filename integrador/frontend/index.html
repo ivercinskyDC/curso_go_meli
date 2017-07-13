@@ -50,7 +50,8 @@
         $("#buscar").on("click", function (e) {
             var button = $(this).button('loading')
             var url = "/categories/" + $("#catID").val() + "/prices"
-            $("#errors").html("")
+            $("#errors").html("");
+            $("#suggestion").html("");
             $.get({
                 url: url
             }).then(function (data) {
