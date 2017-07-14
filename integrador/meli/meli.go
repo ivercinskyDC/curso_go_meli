@@ -11,6 +11,7 @@ import (
 
 //Category returns the Category
 func (m *Meli) Category(CatID string) (*Category, error) {
+	//TODO: No hardcodear la URL
 	url := "https://api.mercadolibre.com/categories/"
 	url += CatID
 	fmt.Fprintf(os.Stdout, "Calling %s\n", url)
@@ -40,6 +41,7 @@ func (m *Meli) Category(CatID string) (*Category, error) {
 
 //Search is a wrapper for the http call to
 func (m *Meli) Search(params *SearchParams) (*SearchResult, error) {
+	//TODO: No hardcodear la URL
 	url := "https://api.mercadolibre.com/sites/" + m.SiteID + "/search?"
 	if params.MethodID == "" {
 		return nil, errors.New("MethoID is required")
@@ -88,6 +90,10 @@ func (m *Meli) getSuggestion(items []SearchItem) (*Suggestion, error) {
 	max = 0
 	avg = 0
 	solds = 0
+	//TODO: Se podria mejorar haciendo un kMeans.
+	//Con el Kmeans podemos encontrar subcategorias en los items.
+	//Luego podriamos devolver el promedio del grupo con mas elementos
+	//O varias sugerencias. (Quizas agregar mas categorias en estos casos)
 	for _, item := range items {
 		if item.Condition != "new" {
 			continue
@@ -108,13 +114,14 @@ func (m *Meli) getSuggestion(items []SearchItem) (*Suggestion, error) {
 //Prices returns an estimated price for the category
 func (m *Meli) Prices(CatID string) (*Suggestion, error) {
 	cat, err := m.Category(CatID)
+	//Busco la categoria para no calcular el precio sugerido de una categoria con muchos elementos diferentes.
 	if err != nil {
 		return nil, err
 	}
 	if len(cat.ChildrenCategories) > 0 {
 		return nil, errors.New("La categoria no puede tener subcategorias")
 	}
-	//hacer un multiget para recuperar todos los items de la categoria. haciendo ItemsEnCategoria / 200
+	//TODO: hacer un multiget para recuperar todos los items de la categoria. haciendo ItemsEnCategoria / 200
 	searchParams := &SearchParams{}
 	searchParams.MethodID = "category"
 	searchParams.SearchID = cat.ID
